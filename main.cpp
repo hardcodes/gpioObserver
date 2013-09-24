@@ -1,3 +1,5 @@
+// gpioObserver, (c)2013 by Sven Putze
+// GPL
 #include <QCoreApplication>
 #include <QTimer>
 #include <signal.h>

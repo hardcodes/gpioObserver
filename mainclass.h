@@ -8,12 +8,13 @@
 #include <QTimer>
 #include <QStringList>
 #include <QProcess>
+#include <QRegExp>
 
 #include "GPIOClass.h"
 
 const int HC_TIMER_INTERVAL = 200;
-const QString HC_VALID_IO_STATES = "^(1|0)$";
-const QString HC_VALID_GPIO_PINS = "^(17|21|22|23|24|25|27)$";
+const QRegExp HC_VALID_IO_STATES = QRegExp("^(1|0)$");
+const QRegExp HC_VALID_GPIO_PINS = QRegExp("^(17|21|22|23|24|25|27)$");
 
 class MainClass : public QObject
 {
@@ -36,6 +37,7 @@ public:
 private:
 	void usage();
 	void parseCommandLine();
+    bool parseAndValidateCommandLine();
 	void initGpio();
 	void executeCommandLine();
     std::string now();
