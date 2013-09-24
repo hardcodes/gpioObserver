@@ -1,7 +1,6 @@
 #include "mainclass.h"
 #include <stdio.h>
-
-
+#include <QDate>
 
 using namespace std;
 
@@ -10,7 +9,7 @@ MainClass::MainClass(QObject *parent) :
 {
 	app = QCoreApplication::instance();
 	this->process = new QProcess(this);
-	this->observerTimer = new QTimer(this);
+    this->observerTimer = new QTimer(this);
 	connect(this->observerTimer, SIGNAL(timeout()), this, SLOT(fireTimer()));
 }
 
@@ -24,7 +23,7 @@ void MainClass::run()
 {
 	parseCommandLine();
 	initGpio();
-	this->observerTimer->start(timerInterval);
+	this->observerTimer->start(HC_TIMER_INTERVAL);
 	// do not return, the eventloop keeps on running
 }
 
@@ -64,16 +63,16 @@ void MainClass::parseCommandLine()
 
 void MainClass::initGpio()
 {
-	this->gpioClass = new GPIOClass(this->gpioPinNumber.toStdString());
+    this->gpioClass = std::unique_ptr<GPIOClass>(new GPIOClass(this->gpioPinNumber.toStdString()));
 	this->gpioClass->setdir_gpio("in");
 	cout << "set GPIO pin direction 'in'" << endl;
 	this->gpioClass->getval_gpio(this->lastInputState);
-	cout << "current input state is " << this->lastInputState << endl;
+    cout << now() << "current input state is " << this->lastInputState << endl;
 }
 
 void MainClass::executeCommandLine()
 {
-	cout << "executing [" << this->externalCommand.toStdString() << " ";
+    cout << now() << "executing [" << this->externalCommand.toStdString() << " ";
 	foreach (QString partialArgument, this->argumentList) {
 		cout << partialArgument.toStdString() << " ";
 	}
@@ -88,17 +87,21 @@ void MainClass::executeCommandLine()
 	else
 		cout << "ERR" << endl;
 	// executed, continue surveillance
-	this->observerTimer->start();
+    this->observerTimer->start();
+}
+
+string MainClass::now()
+{
+    return QDate::currentDate().toString("YYYYMMDD-hh:mm:ss - ").toStdString();
 }
 
 void MainClass::aboutToQuitApp()
 {
-	cout << endl << "aboutToQuitApp....." << endl;
+    cout << endl << now() << "aboutToQuitApp....." << endl;
 	if(this->observerTimer->isActive())
 		this->observerTimer->stop();
 	if(QProcess::Running||QProcess::Starting == this->process->state())
 		this->process->kill();
-	delete this->gpioClass;
 	cout << "stopped" << endl;
 }
 
@@ -107,7 +110,7 @@ void MainClass::fireTimer()
 	std::string currentInputState;
 	this->gpioClass->getval_gpio(currentInputState);
 	if(this->lastInputState != currentInputState){
-		cout << "input value has changed, now in state " << currentInputState << endl;
+        cout << now() << "input value has changed, now in state " << currentInputState << endl;
 		if(currentInputState == this->stateToObserve)
 			executeCommandLine();
 		this->lastInputState = currentInputState;

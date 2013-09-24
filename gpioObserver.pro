@@ -5,12 +5,18 @@
 #-------------------------------------------------
 
 QT       += core
-
 QT       -= gui
 
-TARGET = gpioObserver
+TARGET    = gpioObserver
 CONFIG   += console
 CONFIG   -= app_bundle
+greaterThan(QT_MAJOR_VERSION, 4):{
+  CONFIG   += c++11
+  cache()
+}
+else{
+  QMAKE_CXXFLAGS += -std=c++11
+}
 
 TEMPLATE = app
 

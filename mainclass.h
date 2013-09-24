@@ -11,7 +11,9 @@
 
 #include "GPIOClass.h"
 
-const int timerInterval = 200;
+const int HC_TIMER_INTERVAL = 200;
+const QString HC_VALID_IO_STATES = "^(1|0)$";
+const QString HC_VALID_GPIO_PINS = "^(17|21|22|23|24|25|27)$";
 
 class MainClass : public QObject
 {
@@ -21,11 +23,11 @@ private:
 	QString gpioPinNumber;
 	QString externalCommand;
 	QStringList argumentList;
-	GPIOClass *gpioClass;
+    std::unique_ptr<GPIOClass> gpioClass;
 	std::string lastInputState;
 	std::string stateToObserve;
-	QTimer *observerTimer;
-	QProcess *process;
+    QTimer *observerTimer;
+    QProcess *process;
 public:
 	explicit MainClass(QObject *parent = 0);
 	~MainClass();
@@ -36,6 +38,7 @@ private:
 	void parseCommandLine();
 	void initGpio();
 	void executeCommandLine();
+    std::string now();
 signals:
 	void finished();
 	void finishedWithError(int returnCode =0);
