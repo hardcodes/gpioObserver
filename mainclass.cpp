@@ -23,7 +23,7 @@ MainClass::~MainClass()
 void MainClass::run()
 {
 	parseCommandLine();
-    cout << "waiting for next change to state " << this->stateToObserve << endl;
+    cout << now() << "waiting for next change to state " << this->stateToObserve << endl;
 	initGpio();
 	this->observerTimer->start(HC_TIMER_INTERVAL);
 	// do not return, the eventloop keeps on running

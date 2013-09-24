@@ -13,7 +13,9 @@
 #include "GPIOClass.h"
 
 const int HC_TIMER_INTERVAL = 200;
+// can only be on/off
 const QRegExp HC_VALID_IO_STATES = QRegExp("^(1|0)$");
+// there are more gpio pins but these are not preset with other functions
 const QRegExp HC_VALID_GPIO_PINS = QRegExp("^(17|21|22|23|24|25|27)$");
 
 class MainClass : public QObject
