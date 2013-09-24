@@ -15,7 +15,7 @@ greaterThan(QT_MAJOR_VERSION, 4):{
   cache()
 }
 else{
-  QMAKE_CXXFLAGS += -std=c++11
+  QMAKE_CXXFLAGS += -std=gnu++0x -Wextra -pedantic
 }
 
 TEMPLATE = app

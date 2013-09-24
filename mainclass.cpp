@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <QDate>
 #include <QFile>
+#include <QTime>
 
 using namespace std;
 
@@ -22,7 +23,8 @@ MainClass::~MainClass()
 
 void MainClass::run()
 {
-	parseCommandLine();
+    if(!parseCommandLine())
+        return;
     cout << now() << "waiting for next change to state " << this->stateToObserve << endl;
 	initGpio();
 	this->observerTimer->start(HC_TIMER_INTERVAL);
@@ -55,14 +57,16 @@ void MainClass::usage()
     cout << "  <arguments> are the commandline parameters for <executable>" << endl << endl;
 }
 
-void MainClass::parseCommandLine()
+bool MainClass::parseCommandLine()
 {
     if(5!=(app->arguments().count()) ||
             !parseAndValidateCommandLine())
     {
 		usage();
 		finishWithError(1);
+        return false;
 	}
+    return true;
 }
 
 bool MainClass::parseAndValidateCommandLine()
@@ -121,12 +125,12 @@ void MainClass::executeCommandLine()
 
 string MainClass::now()
 {
-    return QDate::currentDate().toString("YYYYMMDD-hh:mm:ss - ").toStdString();
+    return QDate::currentDate().toString("yyyyMMdd").toStdString() + QTime::currentTime().toString("hh:mm:ss - ").toStdString();
 }
 
 void MainClass::aboutToQuitApp()
 {
-    cout << endl << now() << "aboutToQuitApp....." << endl;
+    cout << endl << "aboutToQuitApp....." << endl;
 	if(this->observerTimer->isActive())
 		this->observerTimer->stop();
 	if(QProcess::Running||QProcess::Starting == this->process->state())

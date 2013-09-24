@@ -11,6 +11,7 @@
 #include <QRegExp>
 
 #include "GPIOClass.h"
+#include <memory>
 
 const int HC_TIMER_INTERVAL = 200;
 // can only be on/off
@@ -38,7 +39,7 @@ public:
 	void finishWithError(int returnCode = 0);
 private:
 	void usage();
-	void parseCommandLine();
+    bool parseCommandLine();
     bool parseAndValidateCommandLine();
 	void initGpio();
 	void executeCommandLine();
