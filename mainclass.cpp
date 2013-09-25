@@ -48,18 +48,20 @@ void MainClass::usage()
     cout << "gpioObserver, (c)2013 by Sven Putze" << endl << endl;
     cout << "  wait for one gpio pin to reach a desired state and execute a program afterwards" << endl << endl;
 	cout << "usage:" << std::endl << endl;
-	cout << "gpioObserver <GPIO pin number> <state to observe> <executable> <arguments>" << endl;
-    cout << "  <GPIO pin number> can be one out of (17|21|22|23|24|25|27)" << endl;
+    cout << "  gpioObserver <GPIO pin number> <state to observe> <executable> [<arguments>]" << endl;
+    cout << "  <GPIO pin number> must be one out of (17|21|22|23|24|25|27)" << endl;
     cout << "       21 is board revision 1" << endl;
     cout << "       27 is board revision 2 of the same pin" << endl;
     cout << "  <state to observe> must be one out of (0|1)" << endl;
     cout << "  <executable> is the file that should be executed if <state to observe> is reached" << endl;
-    cout << "  <arguments> are the commandline parameters for <executable>" << endl << endl;
+    cout << "  [<arguments>] are optional commandline parameters for <executable>" << endl;
+    cout << "       don't forget quotes if there is more then one parameter" << endl << endl;
 }
 
 bool MainClass::parseCommandLine()
 {
-    if(5!=(app->arguments().count()) ||
+    if(4<(app->arguments().count()) ||
+            6>(app->arguments().count()) ||
             !parseAndValidateCommandLine())
     {
 		usage();
@@ -89,8 +91,8 @@ bool MainClass::parseAndValidateCommandLine()
         return false;
     }
     this->externalCommand = app->arguments().at(3);
-    this->argumentList << app->arguments().at(4).split(" ");
-
+    if(5 == app->arguments().count())
+        this->argumentList << app->arguments().at(4).split(" ");
     return true;
 }
 
@@ -125,7 +127,7 @@ void MainClass::executeCommandLine()
 
 string MainClass::now()
 {
-    return QDate::currentDate().toString("yyyyMMdd").toStdString() + QTime::currentTime().toString("hh:mm:ss - ").toStdString();
+    return QDate::currentDate().toString("yyyyMMdd ").toStdString() + QTime::currentTime().toString("hh:mm:ss : ").toStdString();
 }
 
 void MainClass::aboutToQuitApp()

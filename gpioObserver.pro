@@ -11,15 +11,24 @@ TARGET    = gpioObserver
 CONFIG   += console
 CONFIG   -= app_bundle
 greaterThan(QT_MAJOR_VERSION, 4):{
-  CONFIG   += c++11
+  # this is just a way to be able to compile the code with OSX
+  # using the Mac as development machine
+  macx{
+    CONFIG   += c++11
+  }
   cache()
 }
 else{
+  # on Raspberry Pi there is a gcc 4.6.3
   QMAKE_CXXFLAGS += -std=gnu++0x -Wextra -pedantic
 }
 
 TEMPLATE = app
 
+makeinstall.path += /usr/local/bin
+makeinstall.files = $$[QT_INSTALL_DATA]/$$[TARGET]
+makeinstall.extra = "sudo chmod 700 /usr/local/bin/"$$[TARGET]
+INSTALLS += makeinstall
 
 SOURCES += main.cpp \
     mainclass.cpp \
