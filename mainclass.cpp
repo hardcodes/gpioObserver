@@ -45,8 +45,9 @@ void MainClass::finishWithError(int returnCode)
 
 void MainClass::usage()
 {
-    cout << "gpioObserver, (c)2013 by Sven Putze" << endl << endl;
+    cout << "gpioObserver v" << HC_PROGRAMVERSION << ", (c)2013 by Sven Putze" << endl << endl;
     cout << "  wait for one gpio pin to reach a desired state and execute a program afterwards" << endl << endl;
+    cout << "  git commit hash: " << HC_GITHASH << endl;
 	cout << "usage:" << std::endl << endl;
     cout << "  gpioObserver <GPIO pin number> <state to observe> <executable> [<arguments>]" << endl;
     cout << "  <GPIO pin number> must be one out of (17|21|22|23|24|25|27)" << endl;

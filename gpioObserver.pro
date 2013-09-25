@@ -22,7 +22,11 @@ else{
   # on Raspberry Pi there is a gcc 4.6.3
   QMAKE_CXXFLAGS += -std=gnu++0x -Wextra -pedantic
 }
-
+VERSION = 0.1.0
+HC_GITHASH  = $$system(git show HEAD|grep "^commit"|cut -c 8-)
+# c style DEFINEs to access the git hash and program version
+DEFINES += HC_PROGRAMVERSION=\\\"$$VERSION\\\"
+DEFINES += HC_GITHASH=\\\"$$HC_GITHASH\\\"
 TEMPLATE = app
 
 makeinstall.path += /usr/local/bin
