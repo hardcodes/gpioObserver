@@ -13,6 +13,7 @@
 #include "GPIOClass.h"
 #include <memory>
 
+// 5 times a second, fast enough to catch opening/closing a door/window
 const int HC_TIMER_INTERVAL = 200;
 // can only be on/off
 const QRegExp HC_VALID_IO_STATES = QRegExp("^(1|0)$");
@@ -23,7 +24,7 @@ class MainClass : public QObject
 {
 	Q_OBJECT
 private:
-	QCoreApplication *app;
+    QCoreApplication *app;
 	QString gpioPinNumber;
 	QString externalCommand;
 	QStringList argumentList;

@@ -10,7 +10,6 @@ using namespace std;
 MainClass::MainClass(QObject *parent) :
 	QObject(parent)
 {
-	app = QCoreApplication::instance();
 	this->process = new QProcess(this);
     QObject::connect(this->process, SIGNAL(readyReadStandardOutput()), this, SLOT(printCommandLineStandardOutput()));
     QObject::connect(this->process, SIGNAL(readyReadStandardError()), this, SLOT(printCommandLineErrorOutput()));
@@ -64,6 +63,7 @@ void MainClass::usage()
 
 bool MainClass::parseCommandLine()
 {
+    QCoreApplication *app = QCoreApplication::instance();
     if(4<(app->arguments().count()) ||
             6>(app->arguments().count()) ||
             !parseAndValidateCommandLine())
