@@ -3,6 +3,7 @@
 #include <QDate>
 #include <QFile>
 #include <QTime>
+#include <QByteArray>
 
 using namespace std;
 
@@ -11,6 +12,8 @@ MainClass::MainClass(QObject *parent) :
 {
 	app = QCoreApplication::instance();
 	this->process = new QProcess(this);
+    QObject::connect(this->process, SIGNAL(readyReadStandardOutput()), this, SLOT(printCommandLineStandardOutput()));
+    QObject::connect(this->process, SIGNAL(readyReadStandardError()), this, SLOT(printCommandLineErrorOutput()));
     this->observerTimer = new QTimer(this);
 	connect(this->observerTimer, SIGNAL(timeout()), this, SLOT(fireTimer()));
 }
@@ -101,7 +104,7 @@ void MainClass::initGpio()
 {
     this->gpioClass = std::unique_ptr<GPIOClass>(new GPIOClass(this->gpioPinNumber.toStdString()));
 	this->gpioClass->setdir_gpio("in");
-	cout << "set GPIO pin direction 'in'" << endl;
+    cout << "setting GPIO pin direction 'in'" << endl;
 	this->gpioClass->getval_gpio(this->lastInputState);
     cout << now() << "current input state is " << this->lastInputState << endl;
 }
@@ -124,6 +127,24 @@ void MainClass::executeCommandLine()
 		cout << "ERR" << endl;
 	// executed, continue surveillance
     this->observerTimer->start();
+}
+
+void MainClass::printCommandLineStandardOutput()
+{
+    QByteArray stdOutByteArray = this->process->readAllStandardOutput();
+    if(stdOutByteArray.isNull() ||
+            stdOutByteArray.isEmpty())
+        return;
+    cout << now() << QString(stdOutByteArray).toStdString() << endl;
+}
+
+void MainClass::printCommandLineErrorOutput()
+{
+    QByteArray errOutByteArray = this->process->readAllStandardOutput();
+    if(errOutByteArray.isNull() ||
+            errOutByteArray.isEmpty())
+        return;
+    cerr << now() << QString(errOutByteArray).toStdString() << endl;
 }
 
 string MainClass::now()

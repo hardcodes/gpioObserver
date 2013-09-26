@@ -33,7 +33,7 @@ private:
     QTimer *observerTimer;
     QProcess *process;
 public:
-	explicit MainClass(QObject *parent = 0);
+    explicit MainClass(QObject *parent = nullptr);
 	~MainClass();
 	void finish();
 	void finishWithError(int returnCode = 0);
@@ -52,6 +52,8 @@ public slots:
 	void aboutToQuitApp();
 private slots:
 	void fireTimer();
+    void printCommandLineStandardOutput();
+    void printCommandLineErrorOutput();
 };
 
 #endif // MAINCLASS_H
