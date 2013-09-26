@@ -5,8 +5,7 @@
 #-------------------------------------------------
 
 QT       += core
-QT       -= gui
-
+QT       -= gui qml quick
 TARGET    = gpioObserver
 CONFIG   += console
 CONFIG   -= app_bundle
@@ -29,10 +28,18 @@ DEFINES += HC_PROGRAMVERSION=\\\"$$VERSION\\\"
 DEFINES += HC_GITHASH=\\\"$$HC_GITHASH\\\"
 TEMPLATE = app
 
-makeinstall.path += /usr/local/bin
-makeinstall.files = $$[QT_INSTALL_DATA]/$$[TARGET]
-makeinstall.extra = "sudo chmod 700 /usr/local/bin/"$$[TARGET]
+# the user can "sudo make install" to get the binary in the right place
+makeinstall.path = /usr/local/bin
+makeinstall.files = $${OUT_PWD}/$${TARGET}
 INSTALLS += makeinstall
+# .extras is executed before files are copied
+# this install block is just there to run chmod
+makeinstallpost.files =
+makeinstallpost.path = /usr/local/bin
+makeinstallpost.extra = "chmod 700 /usr/local/bin/$${TARGET}"
+makeinstallpost.depends = install_makeinstall
+INSTALLS += makeinstallpost
+
 
 SOURCES += main.cpp \
     mainclass.cpp \

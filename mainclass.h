@@ -31,6 +31,8 @@ private:
     std::unique_ptr<GPIOClass> gpioClass;
 	std::string lastInputState;
 	std::string stateToObserve;
+    // not using std::unique_ptr<> here because signals slots can not be connected (at least with Qt4.x
+    // and the old QObject::connect syntax
     QTimer *observerTimer;
     QProcess *process;
 public:
@@ -43,7 +45,7 @@ private:
     bool parseCommandLine();
     bool parseAndValidateCommandLine();
 	void initGpio();
-	void executeCommandLine();
+    void executeExternalProcess();
     std::string now();
 signals:
 	void finished();

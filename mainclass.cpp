@@ -10,7 +10,8 @@ using namespace std;
 MainClass::MainClass(QObject *parent) :
 	QObject(parent)
 {
-	this->process = new QProcess(this);
+    app = QCoreApplication::instance();
+    this->process = new QProcess(this);
     QObject::connect(this->process, SIGNAL(readyReadStandardOutput()), this, SLOT(printCommandLineStandardOutput()));
     QObject::connect(this->process, SIGNAL(readyReadStandardError()), this, SLOT(printCommandLineErrorOutput()));
     this->observerTimer = new QTimer(this);
@@ -25,8 +26,11 @@ MainClass::~MainClass()
 
 void MainClass::run()
 {
-    if(!parseCommandLine())
+    if(!parseCommandLine()){
+        usage();
+        finishWithError(1);
         return;
+    }
     cout << now() << "waiting for next change to state " << this->stateToObserve << endl;
 	initGpio();
 	this->observerTimer->start(HC_TIMER_INTERVAL);
@@ -47,32 +51,26 @@ void MainClass::finishWithError(int returnCode)
 
 void MainClass::usage()
 {
-    cout << "gpioObserver v" << HC_PROGRAMVERSION << ", (c)2013 by Sven Putze" << endl << endl;
+    cout << "gpioObserver v" << HC_PROGRAMVERSION << ", (c)2013 by Sven Putze [git hash: " << HC_GITHASH << "]" << endl << endl;
     cout << "  wait for one gpio pin to reach a desired state and execute a program afterwards" << endl << endl;
-    cout << "  git commit hash: " << HC_GITHASH << endl;
 	cout << "usage:" << std::endl << endl;
-    cout << "  gpioObserver <GPIO pin number> <state to observe> <executable> [<arguments>]" << endl;
-    cout << "  <GPIO pin number> must be one out of (17|21|22|23|24|25|27)" << endl;
-    cout << "       21 is board revision 1" << endl;
-    cout << "       27 is board revision 2 of the same pin" << endl;
-    cout << "  <state to observe> must be one out of (0|1)" << endl;
-    cout << "  <executable> is the file that should be executed if <state to observe> is reached" << endl;
-    cout << "  [<arguments>] are optional commandline parameters for <executable>" << endl;
-    cout << "       don't forget quotes if there is more then one parameter" << endl << endl;
+    cout << "  gpioObserver <GPIO pin number> <state to observe> <executable> [<arguments>]" << endl << endl;
+    cout << "    <GPIO pin number> must be one out of (17|21|22|23|24|25|27)" << endl;
+    cout << "         21 is board revision 1" << endl;
+    cout << "         27 is board revision 2 of the same pin" << endl;
+    cout << "    <state to observe> must be one out of (0|1)" << endl;
+    cout << "    <executable> is the file that should be executed if <state to observe> is reached" << endl;
+    cout << "    [<arguments>] are optional commandline parameters for <executable>" << endl;
+    cout << "         don't forget quotes if there is more then one parameter" << endl << endl;
 }
 
 bool MainClass::parseCommandLine()
 {
-    QCoreApplication *app = QCoreApplication::instance();
-    if(4<(app->arguments().count()) ||
-            6>(app->arguments().count()) ||
-            !parseAndValidateCommandLine())
-    {
-		usage();
-		finishWithError(1);
+    if((app->arguments().count()) < 4){
+        cout << "too few arguments" << endl;
         return false;
-	}
-    return true;
+    }
+    return parseAndValidateCommandLine();
 }
 
 bool MainClass::parseAndValidateCommandLine()
@@ -95,7 +93,7 @@ bool MainClass::parseAndValidateCommandLine()
         return false;
     }
     this->externalCommand = app->arguments().at(3);
-    if(5 == app->arguments().count())
+    if(app->arguments().count() >4)
         this->argumentList << app->arguments().at(4).split(" ");
     return true;
 }
@@ -109,7 +107,7 @@ void MainClass::initGpio()
     cout << now() << "current input state is " << this->lastInputState << endl;
 }
 
-void MainClass::executeCommandLine()
+void MainClass::executeExternalProcess()
 {
     cout << now() << "executing [" << this->externalCommand.toStdString() << " ";
 	foreach (QString partialArgument, this->argumentList) {
@@ -117,6 +115,7 @@ void MainClass::executeCommandLine()
 	}
 	cout << "] ... " << endl;
 	// prevent calling executable more than once at the same time
+    // TODO: check if we really need to do this
 	this->observerTimer->stop();
 	process->start(this->externalCommand, this->argumentList);
 	process->waitForFinished();
@@ -169,7 +168,7 @@ void MainClass::fireTimer()
 	if(this->lastInputState != currentInputState){
         cout << now() << "input value has changed, now in state " << currentInputState << endl;
 		if(currentInputState == this->stateToObserve)
-			executeCommandLine();
+            executeExternalProcess();
 		this->lastInputState = currentInputState;
 	}
 }

@@ -18,6 +18,7 @@
 #include <QCoreApplication>
 #include <QTimer>
 #include "mainclass.h"
+#include <signal.h>
 
 using namespace std;
 
