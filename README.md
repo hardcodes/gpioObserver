@@ -7,15 +7,15 @@ Checks periodically if a GPIO pin on a Raspberry Pi has reached a desired state 
 
 Open your terminal and enter
 
-`git clone https://github.com/hardcodes/gpioObserver.git
+`git clone https://github.com/hardcodes/gpioObserver.git`
 
-`cd gpioObserver
+`cd gpioObserver`
 
-`qmake
+`qmake`
 
-`make
+`make`
 
-`sudo make install
+`sudo make install`
 
 
 For more details about this tool, look here:
