@@ -1,16 +1,15 @@
-gpioObserver
-============
+#gpioObserver
 
 Checks periodically if a GPIO pin on a Pasbberry Pi has reached a desired state and calls external program afterwards.
 
 
-Build instructions
-------------------
-#clone from git
-#cd into gpioObserver folder
-#qmake
-#make
-#sudo make install
+##Build instructions
+
+*clone from git
+*`cd gpioObserver
+*`qmake
+*`make
+*`sudo make install
 
 
 For more details about this tool, look here:
