@@ -57,6 +57,7 @@ private slots:
 	void fireTimer();
     void printCommandLineStandardOutput();
     void printCommandLineErrorOutput();
+    void externalProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
 };
 
 #endif // MAINCLASS_H

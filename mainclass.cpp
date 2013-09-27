@@ -14,6 +14,7 @@ MainClass::MainClass(QObject *parent) :
     this->process = new QProcess(this);
     QObject::connect(this->process, SIGNAL(readyReadStandardOutput()), this, SLOT(printCommandLineStandardOutput()));
     QObject::connect(this->process, SIGNAL(readyReadStandardError()), this, SLOT(printCommandLineErrorOutput()));
+    QObject::connect(this->process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(externalProcessFinished(int,QProcess::ExitStatus)));
     this->observerTimer = new QTimer(this);
 	connect(this->observerTimer, SIGNAL(timeout()), this, SLOT(fireTimer()));
 }
@@ -109,22 +110,26 @@ void MainClass::initGpio()
 
 void MainClass::executeExternalProcess()
 {
-    cout << now() << "executing [" << this->externalCommand.toStdString() << " ";
+    cout << now() << "executing [" << this->externalCommand.toStdString();
 	foreach (QString partialArgument, this->argumentList) {
 		cout << partialArgument.toStdString() << " ";
 	}
 	cout << "] ... " << endl;
 	// prevent calling executable more than once at the same time
-    // TODO: check if we really need to do this
 	this->observerTimer->stop();
-	process->start(this->externalCommand, this->argumentList);
-	process->waitForFinished();
-	if(QProcess::NormalExit == process->exitStatus() &&
-			0 == process->exitCode())
-		cout << "OK" << endl;
-	else
-		cout << "ERR" << endl;
-	// executed, continue surveillance
+    this->process->setProcessChannelMode(QProcess::MergedChannels);
+    this->process->start(this->externalCommand, this->argumentList);
+}
+
+void MainClass::externalProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    cout << now() << "executed [" << this->externalCommand.toStdString() << "] - ";
+    if(QProcess::NormalExit == exitStatus &&
+            0 == exitCode)
+        cout << "OK" << endl;
+    else
+        cout << "ERR" << endl;
+    // executed, continue surveillance
     this->observerTimer->start();
 }
 
@@ -134,7 +139,7 @@ void MainClass::printCommandLineStandardOutput()
     if(stdOutByteArray.isNull() ||
             stdOutByteArray.isEmpty())
         return;
-    cout << now() << QString(stdOutByteArray).toStdString() << endl;
+    cout << QString(stdOutByteArray).toStdString() << endl;
 }
 
 void MainClass::printCommandLineErrorOutput()
@@ -143,7 +148,7 @@ void MainClass::printCommandLineErrorOutput()
     if(errOutByteArray.isNull() ||
             errOutByteArray.isEmpty())
         return;
-    cerr << now() << QString(errOutByteArray).toStdString() << endl;
+    cerr << QString(errOutByteArray).toStdString() << endl;
 }
 
 string MainClass::now()

@@ -1,5 +1,5 @@
 // gpioObserver, (c)2013 by Sven Putze (hardcodes.de), see
-//   http://
+//   https://github.com/hardcodes/gpioObserver.git
 // GPIOClass, (c) Hussam Al-Hertani, see
 //   https://github.com/halherta/RaspberryPi-GPIOClass-v1 and/or
 //   http://hertaville.com/2012/11/18/introduction-to-accessing-the-raspberry-pis-gpio-in-c/
