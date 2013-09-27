@@ -1,6 +1,6 @@
 #gpioObserver
 
-Checks periodically if a GPIO pin on a Pasbberry Pi has reached a desired state and calls external program afterwards.
+Checks periodically if a GPIO pin on a Raspberry Pi has reached a desired state and calls external program afterwards.
 
 
 ##Build instructions
