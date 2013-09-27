@@ -5,11 +5,17 @@ Checks periodically if a GPIO pin on a Pasbberry Pi has reached a desired state 
 
 ##Build instructions
 
-*clone from git
-*`cd gpioObserver
-*`qmake
-*`make
-*`sudo make install
+Open your terminal and enter
+
+`git clone https://github.com/hardcodes/gpioObserver.git
+
+`cd gpioObserver
+
+`qmake
+
+`make
+
+`sudo make install
 
 
 For more details about this tool, look here:
