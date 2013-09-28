@@ -25,6 +25,8 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 	signal(SIGINT, QCoreApplication::exit);
+	signal(SIGHUP, QCoreApplication::exit);
+	signal(SIGQUIT, QCoreApplication::exit);
 
 	QCoreApplication app(argc, argv);
 	MainClass mainClass;
